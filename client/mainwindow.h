@@ -17,6 +17,9 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+// Номер порта
+#define _port 9090;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -27,26 +30,36 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    // Кнопки
     QPushButton *changeIpButton;
     QPushButton *changeCheckboxButton;
-    QCheckBox *redCheckBox;
-    QCheckBox *blueCheckBox;
-    QCheckBox *greenCheckBox;
+    // Таблицы
     QTableWidget *buttonTableWidget;
     QTableWidget *lightTableWidget;
+    // Комбобокс
     QComboBox *changeComboBox;
+    // Функция для рисования графического интерфейса
     void drawUI();
 
+    // ip адрес сервера
     QHostAddress address;
+    // Функция для получения ip адреса сервера
     bool getIpAddress();
-    quint16 port = 9090;
+    // Номер порта
+    quint16 port;
+    // TCP сокет
     QTcpSocket *tcpSocket;
+    // Функция для подключения к серверу по протоколу tcp
     void tcpConnect();
+    // Сообщение от сервера
     QString message;
 
 private slots:
+    // Функция для обработки нажатия на кнопку "Connect"
     void handleChangeIpButton();
+    // Функция для отправки сообщения на сервер
     void write();
+    // Функция для чтения сообщения с сервера
     void readyRead();
 };
 #endif // MAINWINDOW_H
