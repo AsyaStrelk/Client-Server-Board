@@ -9,8 +9,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QWidget::setFixedSize(QSize(400,250));
-    QWidget::setWindowTitle ("Not Connected");
+    tcpSocket = new QTcpSocket(this);
+
+    setFixedSize(QSize(400,250));
+    setWindowTitle ("Not Connected");
     drawUI();
 }
 
@@ -19,19 +21,6 @@ void MainWindow::drawUI()
     changeIpButton = new QPushButton("Connect", this);
     changeIpButton->setGeometry(QRect(QPoint(10,10), QSize(150, 50)));
     connect(changeIpButton, SIGNAL(released()), this, SLOT(handleChangeIpButton()));
-
-//    redCheckBox = new QCheckBox("Красный светодиод", this);
-//    redCheckBox->setGeometry(QRect(QPoint(10,80), QSize(100, 20)));
-//    redCheckBox->setChecked(false);
-//    redCheckBox->setDisabled(true);
-//    blueCheckBox = new QCheckBox("Синий светодиод", this);
-//    blueCheckBox->setGeometry(QRect(QPoint(10,100), QSize(100, 20)));
-//    blueCheckBox->setChecked(false);
-//    blueCheckBox->setDisabled(true);
-//    greenCheckBox = new QCheckBox("Зеленый светодиод", this);
-//    greenCheckBox->setGeometry(QRect(QPoint(10,120), QSize(100, 20)));
-//    greenCheckBox->setChecked(false);
-//    greenCheckBox->setDisabled(true);
 
     changeComboBox = new QComboBox(this);
     changeComboBox->addItem("");
@@ -64,7 +53,7 @@ void MainWindow::drawUI()
     buttonTableWidget->setItem(1, 1, new QTableWidgetItem("?"));
 }
 
-void MainWindow::getIpAddress()
+bool MainWindow::getIpAddress()
 {
     bool ok = false;
     while (!ok)
@@ -72,14 +61,13 @@ void MainWindow::getIpAddress()
         QString text = QInputDialog::getText(this, tr("IP-Address"), tr("IP-Address:"), QLineEdit::Normal, "", &ok);
         if (!ok)
         {
-           return;
+           return false;
         }
-        QString ipRange = "(0?\\d?\\d|1\\d\\d|2[0-4]\\d|25[0-5])";
+        QString ipRange = "([0-1]?\\d?\\d|2[0-4]\\d|25[0-5])";
         QRegExp ipRegex ("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$");
         ok =  ipRegex.exactMatch(text) ? true : false;
         if (!ipRegex.exactMatch(text))
         {
-             std::cout << "Wrong IP-Address" << std::endl;
              QMessageBox msgBox;
              msgBox.setWindowTitle("Wrong IP-Address");
              msgBox.setText("Wrong IP-Address");
@@ -87,15 +75,15 @@ void MainWindow::getIpAddress()
              ok = false;
         }
         else {
-            address = QHostAddress(text);
+            address = QHostAddress(text);  
         }
     }
+    return true;
 }
 
 void MainWindow::tcpConnect()
 {
-    tcpSocket = new QTcpSocket(this);
-    port = 9090;
+
     tcpSocket->connectToHost(address, port);
     if (tcpSocket->waitForConnected(1000))
     {
@@ -117,8 +105,9 @@ void MainWindow::tcpConnect()
 
 void MainWindow::readyRead()
 {
-    QByteArray data = tcpSocket->readAll();
-    QString message = tr("data from COM port:%1%2%3%4%5%6%7%8").arg((data[0]&128)!=0)
+    QByteArray data;
+    data = tcpSocket->readAll();
+    message = tr("data from COM port:%1%2%3%4%5%6%7%8").arg((data[0]&128)!=0)
               .arg((data[0]&64)!=0).arg((data[0]&32)!=0).arg((data[0]&16)!=0)
               .arg((data[0]&8)!=0).arg((data[0]&4)!=0).arg((data[0]&2)!=0).arg((data[0]&1)!=0);
     message.remove(0,19);
@@ -146,30 +135,41 @@ void MainWindow::readyRead()
 void MainWindow::write()
 {
     QByteArray data;
-    if (changeComboBox->currentText() == "Red")
+    if (changeComboBox->currentIndex() == 1)
     {
         data = "q";
     }
-    else if (changeComboBox->currentText() == "Blue")
+    else if (changeComboBox->currentIndex() == 2)
     {
         data = "t";
     }
-    else if (changeComboBox->currentText() == "Green")
+    else if (changeComboBox->currentIndex() == 3)
     {
         data = "z";
     }
     else
         return;
-    tcpSocket->write(data);
+
+    for(;;)
+    {
+        if (tcpSocket->write(data) != -1)
+        {
+            break;
+        }
+    }
+
     changeComboBox->setCurrentIndex(0);
 }
 
 void MainWindow::handleChangeIpButton()
 {
-    getIpAddress();
+    if (!getIpAddress())
+    {
+        return;
+    }
     tcpConnect();
 
-    QWidget::setWindowTitle (address.toString());
+    setWindowTitle (address.toString());
     changeCheckboxButton->setDisabled(false);
     buttonTableWidget->setItem(0, 1, new QTableWidgetItem("?"));
     buttonTableWidget->setItem(1, 1, new QTableWidgetItem("?"));
@@ -180,6 +180,8 @@ void MainWindow::handleChangeIpButton()
 
 MainWindow::~MainWindow()
 {
+    tcpSocket->close();
+    tcpSocket->~QTcpSocket();
     delete ui;
 }
 
