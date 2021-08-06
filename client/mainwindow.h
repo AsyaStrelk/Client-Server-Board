@@ -3,16 +3,15 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-#include <QUdpSocket>
+#include <QMessageBox>
+#include <QTableWidget>
+#include <QComboBox>
 #include <QInputDialog>
 #include <QRegExpValidator>
-#include <QMessageBox>
-#include <QCheckBox>
+#include <QUdpSocket>
 #include <QTcpSocket>
-#include <QTableWidget>
-#include <QTextEdit>
-#include <QComboBox>
 #include <QAbstractSocket>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,11 +27,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-
-private slots:
-    void handleChangeIpButton();
-    void write();
-private:
     QPushButton *changeIpButton;
     QPushButton *changeCheckboxButton;
     QCheckBox *redCheckBox;
@@ -41,17 +35,18 @@ private:
     QTableWidget *buttonTableWidget;
     QTableWidget *lightTableWidget;
     QComboBox *changeComboBox;
+    void drawUI();
 
-private slots:
-    void readyRead();
-
-private:
     QHostAddress address;
-    void getIpAddress();
-    quint16 port;
+    bool getIpAddress();
+    quint16 port = 9090;
     QTcpSocket *tcpSocket;
     void tcpConnect();
-private:
-    void drawUI();
+    QString message;
+
+private slots:
+    void handleChangeIpButton();
+    void write();
+    void readyRead();
 };
 #endif // MAINWINDOW_H
