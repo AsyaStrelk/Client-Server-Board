@@ -2117,6 +2117,9 @@
   </group>
   <file>
     <name>$PROJ_DIR$\main.c</name>
+    <configuration>
+      <name>Debug</name>
+    </configuration>
   </file>
 </project>
 
