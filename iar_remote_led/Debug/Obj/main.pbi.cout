@@ -1,10 +1,10 @@
-"D:\kovalskiy\workspace\iar_remote_led\main.c"
+"D:\kovalskiy\workspace\Client-Server-Board\iar_remote_led\main.c"
 -std=c99
 -ferror-limit=100
 -I
 c:\Program Files\ARM\CSL\TexasInstruments\TivaWare
 -I
-D:\kovalskiy\workspace\iar_remote_led\..\pattern
+D:\kovalskiy\workspace\Client-Server-Board\iar_remote_led\..\pattern
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc
 -I
@@ -12,7 +12,7 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc\c
 -I
 c:\Program Files\ARM\CSL\TexasInstruments\TivaWare
 -I
-D:\kovalskiy\workspace\pattern
+D:\kovalskiy\workspace\Client-Server-Board\pattern
 -DTIVA_LAUNCHPAD=1
 -DPART_TM4C123GH6PM=1
 -D__CHAR_BITS__=8

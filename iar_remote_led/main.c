@@ -14,7 +14,8 @@
 
 /*! \brief Структура, отражающая содержание получаемого байта 
  */
-struct receive_packet{
+struct receive_packet
+{
 	uint8_t red: 1;
 	uint8_t green: 1;
 	uint8_t blue: 1;
@@ -22,7 +23,8 @@ struct receive_packet{
 
 /*! \brief Структура, отражающая содержание байта, отправляемого на сервер при нажатии какой-либо кнопки 
  */
-struct transmit_packet {
+struct transmit_packet 
+{
 	uint8_t red: 1;
 	uint8_t green: 1;
 	uint8_t blue: 1;
@@ -56,9 +58,11 @@ int main()
 	//состояние светодиодов
 	struct receive_packet led_state = {0, 0, 0};
 	
-	while(true) {
+	while(true) 
+	{
 	
-		if(received) {
+		if(received) 
+		{
 			
 			//обработка полученного пакета
 			while(UARTCharsAvail(UART0_BASE))
