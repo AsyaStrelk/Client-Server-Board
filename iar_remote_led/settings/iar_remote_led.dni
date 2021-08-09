@@ -42,7 +42,7 @@ LMI_ResetMode=0x00000000
 LMIFTDIserialNo=0E200CE6
 LMIFTDIfoundProbes=
 [DebugChecksum]
-Checksum=-968782575
+Checksum=252015758
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -50,19 +50,19 @@ StopOnThrow=_ 0
 ShowArgs=0
 [Disassembly]
 MixedMode=1
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Disassemble mode]
 mode=0
 [Breakpoints]
 Count=0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
 [Aliases]
 A0=_ "C:\Jenkins\workspace\TivaWare-Git-Release\DriverLib\build\DriverLib.test\driverlib\gpio.c" ""
 A1=_ "C:\Jenkins\workspace\TivaWare-Git-Release\DriverLib\build\DriverLib.test\driverlib\uart.c" ""
 Count=2
 SuppressDialog=1
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""

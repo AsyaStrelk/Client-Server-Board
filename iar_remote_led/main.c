@@ -99,11 +99,12 @@ int main()
 		if(button_pressed)
 		{
 			//если какая-либо кнопка была нажата необходимо подготовить пакет
-			struct transmit_packet packet = {0, 0, 0, 0, 0};
-			packet.red = led_state.red;
-			packet.green = led_state.green;
-			packet.blue = led_state.blue;
-			
+			//struct transmit_packet packet = {0, 0, 0, 0, 0};
+			struct transmit_packet packet = *(struct transmit_packet*)&led_state;;
+//			packet.red = led_state.red;
+//			packet.green = led_state.green;
+//			packet.blue = led_state.blue;
+//			
 			switch(button_pressed)
 			{
 			case 1:
