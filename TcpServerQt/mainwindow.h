@@ -32,35 +32,52 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-    //com-port
-    void ReadCOM();
-    void WriteCOM();
-    void connectCOM();
-    void closeSerialPort();
-
-    //tcp-server
+    
+    //запуск сервера
     void  stopServer();
-    void  startServer();
-
+    //остановка сервера
+    void  startServer();    
+    
+    //подключение по com-порту
+    void connectCOM();
+    //закрытие com-порта
+    void closeSerialPort();
+    //чтение данных с микроконтроллера
+    void ReadCOM();
+    //отправка данных на микроконтроллер
+    void WriteCOM();
+    
 private:
     Ui::MainWindow *ui;
+    //кнопки запуска и остановки сервера
     QPushButton *startButton;
     QPushButton *stopButton;
+    //текстовое поле состояния сервера 
     QTextEdit *textField;
+    //список доступных com-портов
     QComboBox *serialPortBox;
-    //HANDLE hSerial;
+    
+    //выбранный com-порт
     QSerialPort *serialPort;
+    
+    //tcp-сервер
     QTcpServer *tcpServer;
-    int server_status;
+    int server_status; 
+    //список клиентов, подключенных к серверу
     QMap<int,QTcpSocket *> SClients;
 
 private slots:
+    //обработчик нажатия на кнопку старта сервера
     void startButtonClicked();
+    //обработчик нажатия на кнопку остановки сервера
     void stopButtonClicked();
+    //получение данных от клиента
     void slotReadClient();
+    //получение данных от микроконтроллера
     void slotReadComPort();
+    //удаление клиента
     void slotDeleteClient();
+    //добавление клиента
     void addNewUser();
 };
 #endif // MAINWINDOW_H
