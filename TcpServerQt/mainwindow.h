@@ -62,6 +62,7 @@ private:
     
     //tcp-сервер
     QTcpServer *tcpServer;
+    //статус сервера on/off(1/0)
     int server_status; 
     //список клиентов, подключенных к серверу
     QMap<int,QTcpSocket *> SClients;
