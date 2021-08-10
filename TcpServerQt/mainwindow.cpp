@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setWindowTitle("TcpServer");
-    
+
     //отрисовка текстового поля состояния сервера
     textField = new QTextEdit(" ",this);
     textField->setGeometry(QRect(QPoint(20,20),QSize(420,360)));
@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     startButton = new QPushButton("Start", this);
     startButton->setGeometry(QRect(QPoint(20,420),QSize(200,40)));
     connect(startButton, SIGNAL(released()), this, SLOT(startButtonClicked()));
-    
+
     //кнопка остановки сервера
     stopButton = new QPushButton("Stop", this);
     stopButton->setGeometry(QRect(QPoint(240,420),QSize(200,40)));
@@ -28,15 +28,15 @@ MainWindow::MainWindow(QWidget *parent)
     //создание сервера
     tcpServer = new QTcpServer(this);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(addNewUser()));
-    
+
     //дескриптор порта
     serialPort = new QSerialPort(this);
     connect(serialPort, SIGNAL(readyRead()), this, SLOT(slotReadComPort()));
-    
+
     //отрисовка меню com-портов
     serialPortBox=new QComboBox(this);
     serialPortBox->setGeometry(QRect(QPoint(20,390),QSize(420,20)));
-    
+
     //получение и заполнение списка com-портов
     const auto infos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &info : infos)
@@ -56,8 +56,8 @@ void MainWindow::startButtonClicked()
     serialPortBox->setEnabled(false);
     startButton->setEnabled(false);
     stopButton->setEnabled(true);
-    
-    //запуск сервера, подключение к com-порту 
+
+    //запуск сервера, подключение к com-порту
     startServer();
     connectCOM();
 }
@@ -71,7 +71,7 @@ void MainWindow::stopButtonClicked()
     startButton->setEnabled(true);
     stopButton->setEnabled(false);
 
-    //остановка сервера, отключение от порта 
+    //остановка сервера, отключение от порта
     stopServer();
     closeSerialPort();
 }
@@ -81,7 +81,7 @@ void MainWindow::stopButtonClicked()
  */
 void MainWindow::startServer()
 {
-    //создание сокета
+    //попытка создания сокета, если сокет не создан, то вывод сообщения об ошибке, иначе успешное создание
     if (!tcpServer->listen(QHostAddress::Any, 9090) && server_status==0)
     {
         textField->append(tcpServer->errorString());
@@ -119,6 +119,7 @@ void MainWindow::stopServer()
  */
 void MainWindow::addNewUser()
 {
+    //если сервер запущен,то происходит добавление нового клиента
     if(server_status==1)
     {
         //получение и запись информации о новом соединетнии
@@ -142,11 +143,11 @@ void MainWindow::slotDeleteClient()
     uint32_t idUserSocs=clientSocket->socketDescriptor();
     SClients[idUserSocs]->close();
     SClients.remove(idUserSocs);
-    textField->append("client was disconnected, clent id: "+idUserSocs);
+    textField->append("client was disconnected, clent id: " + idUserSocs);
 }
 
 /**
- * @brief Чтение данных, полученных от клиента 
+ * @brief Чтение данных, полученных от клиента
  * с последующей передачей на микроконтроллер
  */
 void MainWindow::slotReadClient()
@@ -161,18 +162,20 @@ void MainWindow::slotReadClient()
 }
 
 /**
- * @brief Чтение данных, полученных от микроконтроллера 
+ * @brief Чтение данных, полученных от микроконтроллера
  * с последующей передачей клиенту
  */
 void MainWindow::slotReadComPort()
 {
     //получение информации о состоянии светодиодов микроконтроллера
     const QByteArray data = serialPort->readAll();
+    //проверка данных на соответствие формату по размеру
     if (data.size()!=1)
     {
     textField->append("data reading from port error");
     stopButtonClicked();
     }
+    //разложение полученного пакета на биты
     textField->append(tr("data from COM port:%1%2%3%4%5%6%7%8").arg((data[0]&128)!=0)
                       .arg((data[0]&64)!=0).arg((data[0]&32)!=0).arg((data[0]&16)!=0)
                       .arg((data[0]&8)!=0).arg((data[0]&4)!=0).arg((data[0]&2)!=0).arg((data[0]&1)!=0));
@@ -191,6 +194,7 @@ void MainWindow::connectCOM()
 {
     //открытие com-порта
     serialPort->setPortName(serialPortBox->currentText());
+    //если порт открыт удачно, то происходит настройка соединения, иначе сообщение об ошибке
     if (serialPort->open(QIODevice::ReadWrite))
     {
         //настройка cоединения с com-портом
@@ -211,6 +215,7 @@ void MainWindow::connectCOM()
  */
 void MainWindow::closeSerialPort()
 {
+    //закрытие com-порта, если он открыт
     if (serialPort->isOpen())
         serialPort->close();
     textField->append("COM port was disconnected");   
